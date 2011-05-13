@@ -1,56 +1,118 @@
 #include <iostream>
 #include <string>
-#include <queue>
+#include <vector>
+#include <ctype.h>
+#include <stdio.h>
 #include "board.h"
 
 using namespace std;
 
 Board::Board(){
-	board = new char*[6];
 
-	for(int i = 0; i < 6; i++)
-		board[i] = new char[5];
+	pieceCount = 20;
+
+	piece * king = new piece; 
+	piece *queen = new piece; 
+	piece *rook = new piece; 
+	piece *bishop = new piece; 
+	piece *knight = new piece; 
+	piece *pawn = new piece; 
+
+	king->x = 0;
+	king->y = 0;
+	king->val = 10000;
+	king->player = false;
+
+	queen->x = 1;
+	queen->y = 0;
+	queen->val = 900;
+	queen->player = false;
+
+	bishop->x = 2;
+	bishop->y = 0;
+	bishop->val = 301;
+	bishop->player = false;
+
+	knight->x = 3;
+	knight->y = 0;
+	knight->val = 300;
+	knight->player = false;
 	
-	onMove = true;
+	rook->x = 4;
+	rook->y = 0;
+	rook->val = 500;
+	rook->player = false;
 
-	board[0][0] = 'k';
-	board[0][1] = 'q';
-	board[0][2] = 'b';
-	board[0][3] = 'n';
-	board[0][4] = 'r';
+	board[0] = king;
+	board[1] = queen;
+	board[2] = bishop;
+	board[3] = knight;
+	board[4] = rook;
+	
 
-	board[1][0] = 'p';
-	board[1][1] = 'p';
-	board[1][2] = 'p';
-	board[1][3] = 'p';
-	board[1][4] = 'p';
+	for(int i = 5; i < 10; i++){
+		
+		pawn->x = i - 5;
+		pawn->y = 1;
+		pawn->val = 100;
+		pawn->player = false;
+		board[i] = pawn;
+		pawn = new piece;
 
-	for(int i = 2; i < 4; i++)
-		for(int j = 0; j < 6; j++){
-			board[i][j] = 'x';
-		}
+	}
+	for(int i = 10; i < 15; ++i){
+		pawn->x = i - 10;
+		pawn->y = 4;
+		pawn->val = 100;
+		pawn->player = true;
+		board[i] = pawn;
+		pawn = new piece;
+	}
 
-	board[4][0] = 'P';
-	board[4][1] = 'P';
-	board[4][2] = 'P';
-	board[4][3] = 'P';
-	board[4][4] = 'P';
+	king = new piece; 
+	queen = new piece; 
+	rook = new piece; 
+	bishop = new piece; 
+	knight = new piece; 
+	pawn = new piece; 
+	
+	king->x = 4;
+	king->y = 5;
+	king->val = 10000;
+	king->player = true;
 
-	board[5][4] = 'K';
-	board[5][3] = 'Q';
-	board[5][2] = 'B';
-	board[5][1] = 'N';
-	board[5][0] = 'R';
+	queen->x = 3;
+	queen->y = 5;
+	queen->val = 900;
+	queen->player = true;
+
+	bishop->x = 2;
+	bishop->y = 5;
+	bishop->val = 301;
+	bishop->player = true;
+
+	knight->x = 1;
+	knight->y = 5;
+	knight->val = 300;
+	knight->player = true;
+	
+	rook->x = 0;
+	rook->y = 5;
+	rook->val = 500;
+	rook->player = true;
+	
+	board[15] = king;
+	board[16] = queen;
+	board[17] = bishop;
+	board[18] = knight;
+	board[19] = rook;
 }
 
 Board::~Board(){
-	for(int i = 0; i < 5; i++)
-		delete[] board[i];
-	delete[] board;
 }
 
-const int ** Board::getBoard(){
-	return (const int**)board;
+vector<piece>* Board::getBoard(){
+	return NULL;
 }
 
 int** Board::moveGen(){
@@ -65,11 +127,41 @@ int Board::eval(){
 }
 
 void Board::displayBoard(){
-	for(int i = 0; i < 6; i++){
-		for(int j = 0; j < 5; j++){
-			cout << board[i][j] << ' ';
+	char * textBoard[5];
+
+	for(int i = 0; i < 5; ++i){
+		textBoard[i] = new char[6];
+		for(int j = 0; j < 6; ++j){
+			textBoard[i][j] = 'x';
+
 		}
-		cout << endl;
+	}
+
+	for(int i = 0; i < pieceCount; i++){
+		switch(board[i]->val){
+			case 10000: textBoard[board[i]->x][board[i]->y] = 'k';
+				  break;
+				 
+			case 900: textBoard[board[i]->x][board[i]->y] = 'q';
+				  break;
+			case 301: textBoard[board[i]->x][board[i]->y] = 'b';
+				  break;
+			case 300: textBoard[board[i]->x][board[i]->y] = 'n';
+				  break;
+			case 500: textBoard[board[i]->x][board[i]->y] = 'r';
+				  break;
+			case 100: textBoard[board[i]->x][board[i]->y] = 'p';
+				  break;
+			default:  break;
+		}
+
+		if(board[i]->player && textBoard != 'x')
+			textBoard[board[i]->x][board[i]->y] =
+			toupper(textBoard[board[i]->x][board[i]->y]);
+	}
+	
+	for(int i = 0; i < 5; i++){
+		cout << textBoard[i] << endl;
 	}
 
 }
