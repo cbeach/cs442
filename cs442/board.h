@@ -10,11 +10,11 @@ class Board{
 
 	public:
 		Board();
-		Board(int pieceType, int x, int y);
+		Board(int x, int y, int pieceType);
 		~Board();
 
 		vector<piece>* getBoard();
-		void moveGen(move*);
+		move* getMove();
 		void updateBoard(char*);
 		int eval();
 		void displayBoard();
@@ -27,6 +27,11 @@ class Board{
 	
 		move * root;
 		
+		vector<move*>::iterator it;
+				
+		void displayMoves();
+			
+		void moveGen(move*);
 		void kingGen(move*);		
 		void queenGen(move*);		
 		void bishGen(move*);		
@@ -35,11 +40,12 @@ class Board{
 		void pawnGen(move*);		
 		
 
-		bool scanMove(int x, int y, int dir, bool recure, int piece, move* moveArray,
-		int moveArrayidx, bool srcPlayer);
+		bool scanMove(int x, int y, int dir, bool recure, int piece,
+		move *subRoot, bool srcPlayer);
 
 		bool kqMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool bishopMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir);
+		bool knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir);
 		bool rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 

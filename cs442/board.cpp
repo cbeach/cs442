@@ -132,14 +132,15 @@ Board::Board(){
 
 //constructor for setting up test boards
 
-Board::Board(int pieceType, int x, int y){
-	piece tempPiece = new piece;
+Board::Board(int x, int y, int pieceType){
+	piece *tempPiece = new piece;
 	pieceCount = 1;
-
+	root = new move(0,0,0,0,WHITE);
+	
 	switch(pieceType){
 		case KING:	
-			tempPiece->x = 0;
-			tempPiece->y = 0;
+			tempPiece->x = x;
+			tempPiece->y = y;
 			tempPiece->val = 10000;
 			tempPiece->player = false;
 			tempPiece->designation = KING;
@@ -148,8 +149,8 @@ Board::Board(int pieceType, int x, int y){
 			break;
 
 		case QUEEN:	
-			tempPiece->x = 0;
-			tempPiece->y = 0;
+			tempPiece->x = x;
+			tempPiece->y = y;
 			tempPiece->val = 900;
 			tempPiece->player = false;
 			tempPiece->designation = QUEEN;
@@ -158,16 +159,45 @@ Board::Board(int pieceType, int x, int y){
 			break;
 
 		case BISHOP:
+			tempPiece->x = x;
+			tempPiece->y = y;
+			tempPiece->val = 301;
+			tempPiece->player = false;
+			tempPiece->designation = BISHOP;
+			
+			board[0] = tempPiece;
+			break;
 
+		case KNIGHT:
+			tempPiece->x = x;
+			tempPiece->y = y;
+			tempPiece->val = 301;
+			tempPiece->player = false;
+			tempPiece->designation = KNIGHT;
+			
+			board[0] = tempPiece;
+			break;
 
+		case ROOK:
+			tempPiece->x = x;
+			tempPiece->y = y;
+			tempPiece->val = 301;
+			tempPiece->player = false;
+			tempPiece->designation = ROOK;
+			
+			board[0] = tempPiece;
+			break;
 
-
-
-
+		case PAWN:
+			tempPiece->x = x;
+			tempPiece->y = y;
+			tempPiece->val = 301;
+			tempPiece->player = false;
+			tempPiece->designation = PAWN;
+			
+			board[0] = tempPiece;
+			break;
 	}
-
-
-
 }
 
 Board::~Board(){
@@ -183,14 +213,15 @@ int Board::eval(){
 	return NULL;
 }
 
-void Board::displayBoard(){
+//for displaying the moves on the test board
+void Board::displayMoves(){
+	
 	char * textBoard[5];
 
 	for(int i = 0; i < 5; i++){
 		textBoard[i] = new char[6];
 		for(int j = 0; j < 6; ++j){
-			textBoard[i][j] = 'x';
-
+			textBoard[i][j] = '.';
 		}
 	}
 
@@ -212,7 +243,54 @@ void Board::displayBoard(){
 			default:  break;
 		}
 
-		if(board[i]->player && textBoard != 'x')
+		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != '.')
+			textBoard[board[i]->x][board[i]->y] =
+			toupper(textBoard[board[i]->x][board[i]->y]);
+	}
+
+	move *tempMove = NULL;
+	
+	for(int i = 0; i < root->childrenSize; i++){
+		tempMove = root->children[i];
+		textBoard[tempMove->x2][tempMove->y2] = 'x';
+	}
+		
+	for(int i = 0; i < 5; i++){
+		cout << textBoard[i] << endl;
+	}
+
+	
+}
+
+void Board::displayBoard(){
+	char * textBoard[5];
+
+	for(int i = 0; i < 5; i++){
+		textBoard[i] = new char[6];
+		for(int j = 0; j < 6; ++j){
+			textBoard[i][j] = '.';
+		}
+	}
+
+	for(int i = 0; i < pieceCount; i++){
+		switch(board[i]->val){
+			case 10000: textBoard[board[i]->x][board[i]->y] = 'k';
+				  break;
+				 
+			case 900: textBoard[board[i]->x][board[i]->y] = 'q';
+				  break;
+			case 301: textBoard[board[i]->x][board[i]->y] = 'b';
+				  break;
+			case 300: textBoard[board[i]->x][board[i]->y] = 'n';
+				  break;
+			case 500: textBoard[board[i]->x][board[i]->y] = 'r';
+				  break;
+			case 100: textBoard[board[i]->x][board[i]->y] = 'p';
+				  break;
+			default:  break;
+		}
+
+		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != 'x')
 			textBoard[board[i]->x][board[i]->y] =
 			toupper(textBoard[board[i]->x][board[i]->y]);
 	}
@@ -223,14 +301,36 @@ void Board::displayBoard(){
 
 }
 
+move* Board::getMove(){
+	moveGen(root);
+	displayMoves();
+	return NULL;
+}
+
 void Board::moveGen(move *subRoot){
 
 	for(int i = 0; i < pieceCount; i++){
-		
-
+		switch(board[i]->designation){
+			case KING:
+				for(int j = 1; j < 9; j++)
+					scanMove(board[i]->x, board[i]->y,
+						j, false, KING, subRoot, 
+						board[i]->player);
+				break;
+				
+			case QUEEN:
+				break;
+			case BISHOP:
+				break;
+			case KNIGHT:
+				break;
+			case ROOK:
+				break;	
+			case PAWN:
+				break;
+		}
 	}
 }
-
 void Board::kingGen(move* subRoot){
 /*
 	move *temp = NULL;
@@ -308,7 +408,8 @@ void Board::knightGen(move *subRoot){}
 void Board::rookGen(move *subRoot){}
 void Board::pawnGen(move *subRoot){}
 
-bool Board::scanMove(int x, int y, int dir, bool recure, int piece, move* moveArray, int moveArrayidx, bool srcPlayer){
+bool Board::scanMove(int x, int y, int dir, bool recure, int piece, 
+			move *subRoot, bool srcPlayer){
 	int x2 = 0;
 	int y2 = 0;
 	bool goodMove;
@@ -352,16 +453,16 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece, move* moveAr
 
 	switch(piece){
 		case KING: 
-			goodMove = kingMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = kqMoveCheck(x, y, x2, y2, srcPlayer);		
 			break;
 		case QUEEN:
-			goodMove = queenMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = kqMoveCheck(x, y, x2, y2, srcPlayer);		
 			break;
 		case BISHOP: 
 			goodMove = bishopMoveCheck(x, y, x2, y2, srcPlayer, dir);		
 			break;
 		case KNIGHT: 
-			goodMove = knightMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = knightMoveCheck(x, y, x2, y2, srcPlayer, dir);		
 		        break;
 		case ROOK: 
 			goodMove = rookMoveCheck(x, y, x2, y2, srcPlayer);		
@@ -370,13 +471,16 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece, move* moveAr
 			goodMove = pawnMoveCheck(x, y, x2, y2, srcPlayer);		
 			break;
 	}
-	
+	if(goodMove){
+		tempMove = new move(x, y, x2, y2, srcPlayer);
+		subRoot->children[subRoot->childrenSize] = tempMove;
+		subRoot->childrenSize++;
+	}
 	if(goodMove && recure)
-		scanMove(x2, y2, dir, recure, piece, moveArray, moveArrayidx, srcPlayer);
-	else return NULL;
-
-	tempMove = new move(x, y, x2, y2, scrPlayer);
+		scanMove(x2, y2, dir, recure, piece, subRoot, srcPlayer);
+	else return true;
 	
+	return true;
 }
 
 bool Board::kqMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){
@@ -390,7 +494,7 @@ bool Board::kqMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){
 		if(xsrc == board[i]->x && ysrc == board[i]->y)
 			continue;
 		else if(xdst == board[i]->x && ydst == board[i]->y)
-			if(board[i]->player = srcPlayer)
+			if(board[i]->player == srcPlayer)
 				return false;
 			
 	}
@@ -414,7 +518,7 @@ bool Board::bishopMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlay
 			//check if there is a piece in the dest square
 			else if(xdst == board[i]->x && ydst == board[i]->y)
 				//if there is, check to see if it's the same color
-				if(board[i]->player = srcPlayer)
+				if(board[i]->player == srcPlayer)
 					//if it is return false
 					return false;
 		}
@@ -434,7 +538,7 @@ bool Board::bishopMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlay
 	return true;
 }
 //god this is going to be ugly
-bool Board::knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){
+bool Board::knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir){
 	//the dest coordinates are only a distance of one away from the 
 
 
