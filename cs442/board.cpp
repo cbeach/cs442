@@ -319,86 +319,37 @@ void Board::moveGen(move *subRoot){
 				break;
 				
 			case QUEEN:
+				for(int j = 1; j < 9; j++)
+					scanMove(board[i]->x, board[i]->y,
+						j, true, QUEEN, subRoot, 
+						board[i]->player);
 				break;
 			case BISHOP:
+				for(int j = 1; j < 9; j++)
+					if(j & 1) 
+						scanMove(board[i]->x, board[i]->y,
+							j, true, BISHOP, subRoot, 
+							board[i]->player);
+					else
+						scanMove(board[i]->x, board[i]->y,
+							j, false, BISHOP, subRoot, 
+							board[i]->player);
 				break;
 			case KNIGHT:
 				break;
 			case ROOK:
+				for(int j = 1; j < 9; j++)
+					scanMove(board[i]->x, board[i]->y,
+						j, true, ROOK, subRoot, 
+						board[i]->player);
+				
 				break;	
 			case PAWN:
 				break;
 		}
 	}
 }
-void Board::kingGen(move* subRoot){
-/*
-	move *temp = NULL;
 
-	if(onMove){
-		for(int i = 0; i < pieceCount; i++){
-			if(board[i]->player && board[i]->val == 10000){
-				if(board[i]->x < 4){
-					temp = new move(subRoot);
-					temp->x = board[i]->x + 1;
-					subRoot->children.insert(subRoot->it, temp);
-					if(board[i]->y < 5){
-						temp = new move(subRoot);
-						temp->x = board[i]->x + 1;
-						temp->y = board[i]->y + 1;
-						subRoot->children.insert(subRoot->it, temp);
-					}
-					if(board[i]->y > 0){
-						temp = new move(subRoot);
-						temp->x = board[i]->x + 1;
-						temp->y = board[i]->y - 1;
-						subRoot->children.insert(subRoot->it, temp);
-					}
-					
-				}
-				#ifdef CAREFUL
-				else
-					cerr << "White king out of bounds " << board[i]->x << " " << board[i]->y << endl;
-				#endif
-
-				if(board[i]->x > 0){
-					temp = new move(subRoot);
-					temp->x = board[i]->x - 1;
-					subRoot->children.insert(subRoot->it, temp);
-					if(board[i]->y < 5){
-						temp = new move(subRoot);
-						temp->x = board[i]->x - 1;
-						temp->y = board[i]->y + 1;
-						subRoot->children.insert(subRoot->it, temp);
-					}
-					if(board[i]->y > 0){
-						temp = new move(subRoot);
-						temp->x = board[i]->x - 1;
-						temp->y = board[i]->y - 1;
-						subRoot->children.insert(subRoot->it, temp);
-					}
-					
-				}
-				#ifdef CAREFUL
-				else
-					cerr << "White king out of bounds " << board[i]->x << " " << board[i]->y << endl;
-				#endif
-
-				if(board[i]->y > 0){
-					temp = new move(subRoot);
-					temp->x = board[i]k
-
-				}
-			}
-		}
-
-	}
-	else{
-
-
-	}
-*/
-}
 void Board::queenGen(move * subRoot){
 	
 
@@ -453,31 +404,31 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece,
 
 	switch(piece){
 		case KING: 
-			goodMove = kqMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = kqMoveCheck(x, y, x+x2, y+y2, srcPlayer);		
 			break;
 		case QUEEN:
-			goodMove = kqMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = kqMoveCheck(x, y, x+x2, y+y2, srcPlayer);		
 			break;
 		case BISHOP: 
-			goodMove = bishopMoveCheck(x, y, x2, y2, srcPlayer, dir);		
+			goodMove = bishopMoveCheck(x, y, x+x2, y+y2, srcPlayer, dir);		
 			break;
 		case KNIGHT: 
-			goodMove = knightMoveCheck(x, y, x2, y2, srcPlayer, dir);		
+			goodMove = knightMoveCheck(x, y, x+x2, y+y2, srcPlayer, dir);		
 		        break;
 		case ROOK: 
-			goodMove = rookMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = rookMoveCheck(x, y, x+x2, y+y2, srcPlayer);		
 			break;
 		case PAWN: 
-			goodMove = pawnMoveCheck(x, y, x2, y2, srcPlayer);		
+			goodMove = pawnMoveCheck(x, y, x+x2, y+y2, srcPlayer);		
 			break;
 	}
 	if(goodMove){
-		tempMove = new move(x, y, x2, y2, srcPlayer);
+		tempMove = new move(x, y, x+x2, y+y2, srcPlayer);
 		subRoot->children[subRoot->childrenSize] = tempMove;
 		subRoot->childrenSize++;
 	}
 	if(goodMove && recure)
-		scanMove(x2, y2, dir, recure, piece, subRoot, srcPlayer);
+		scanMove(x+x2, y+y2, dir, recure, piece, subRoot, srcPlayer);
 	else return true;
 	
 	return true;
@@ -539,12 +490,41 @@ bool Board::bishopMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlay
 }
 //god this is going to be ugly
 bool Board::knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir){
-	//the dest coordinates are only a distance of one away from the 
+	//the dest coordinates are only a distance of one away from the knight
+	//I'll change that here instead of in scanMove where they're generated
+
 
 
 	return false;
 }
-bool Board::rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){return false;}
+bool Board::rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){
+	if(xdst < 0 || xdst > X_MAX)
+		return false;
+	if(ydst < 0 || ydst > Y_MAX)
+		return false;
+	//if dir is odd do a normal bishop move. In the directional
+	//constants, the diagonals are odd, and the laterals are even
+	//Bit wise and with one yield zero if the number is even,
+	//and it's a LOT faster than num%2
+
+	if(xsrc != xdst && ysrc != ydst){//check the diagonals 		
+		return false;
+	}
+	else{//check the lateral directions
+		for(int i = 0; i < pieceCount; i++){
+			if(xsrc == board[i]->x && ysrc == board[i]->y)
+				continue;
+			//check if there is a piece in the dest square
+			else if(xdst == board[i]->x && ydst == board[i]->y)
+				if(srcPlayer == board[i]->player)
+					//if there is and it's the same color return false
+					return false;
+		}
+	}
+
+
+	return true;
+}
 bool Board::pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){return false;}
 
 
