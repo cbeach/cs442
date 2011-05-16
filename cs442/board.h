@@ -32,12 +32,6 @@ class Board{
 		void displayMoves();
 			
 		void moveGen(move*);
-		void kingGen(move*);		
-		void queenGen(move*);		
-		void bishGen(move*);		
-		void knightGen(move*);		
-		void rookGen(move*);		
-		void pawnGen(move*);		
 		
 
 		bool scanMove(int x, int y, int dir, bool recure, int piece,
@@ -45,6 +39,8 @@ class Board{
 
 		bool kqMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool bishopMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir);
+		 
+		void knightOffset(int xsrc, int ysrc, int *xdst, int* ydst, int dir);
 		bool knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir);
 		bool rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);

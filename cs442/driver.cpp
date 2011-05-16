@@ -5,7 +5,7 @@
 using namespace std;
 
 int main( int argc, char** argv){
-	Board b(2, 4, BISHOP);
+	Board b(2, 2, KNIGHT);
 	b.displayBoard();
 	cout << endl;
 	b.getMove();
