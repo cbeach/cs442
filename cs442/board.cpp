@@ -1,9 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <ctype.h>
-#include <stdio.h>
 #include <assert.h>
+#include <time.h>
+
 #include "board.h"
 #include "defs.h"
 
@@ -13,7 +16,8 @@ using namespace std;
 Board::Board(){
 
 	pieceCount = 20;
-	onMove = true;
+
+	Init();
 
 	piece * king = new piece; 
 	piece *queen = new piece; 
@@ -25,7 +29,7 @@ Board::Board(){
 	king->x = 0;
 	king->y = 0;
 	king->val = 10000;
-	king->player = false;
+	king->player = true;
 	king->designation = KING;
 	
 	board[0] = king;
@@ -34,7 +38,7 @@ Board::Board(){
 	king->x = 4;
 	king->y = 5;
 	king->val = 10000;
-	king->player = true;
+	king->player = false;
 	king->designation = KING;
 
 	board[1] = king;
@@ -42,7 +46,7 @@ Board::Board(){
 	queen->x = 1;
 	queen->y = 0;
 	queen->val = 900;
-	queen->player = false;
+	queen->player = true;
 	queen->designation = QUEEN;
 
 	board[2] = queen;
@@ -51,7 +55,7 @@ Board::Board(){
 	queen->x = 3;
 	queen->y = 5;
 	queen->val = 900;
-	queen->player = true;
+	queen->player = false;
 	queen->designation = QUEEN;
 	
 	board[3] = queen;
@@ -59,7 +63,7 @@ Board::Board(){
 	bishop->x = 2;
 	bishop->y = 0;
 	bishop->val = 301;
-	bishop->player = false;
+	bishop->player = true;
 	bishop->designation = BISHOP;
 
 	board[4] = bishop;
@@ -68,7 +72,7 @@ Board::Board(){
 	bishop->x = 2;
 	bishop->y = 5;
 	bishop->val = 301;
-	bishop->player = true;
+	bishop->player = false;
 	bishop->designation = BISHOP;
 	
 	board[5] = bishop;
@@ -76,7 +80,7 @@ Board::Board(){
 	knight->x = 3;
 	knight->y = 0;
 	knight->val = 300;
-	knight->player = false;
+	knight->player = true;
 	bishop->designation = KNIGHT;
 	
 	board[6] = knight;
@@ -85,7 +89,7 @@ Board::Board(){
 	knight->x = 1;
 	knight->y = 5;
 	knight->val = 300;
-	knight->player = true;
+	knight->player = false;
 	knight->designation = KNIGHT;
 	
 	board[7] = knight;
@@ -93,7 +97,7 @@ Board::Board(){
 	rook->x = 4;
 	rook->y = 0;
 	rook->val = 500;
-	rook->player = false;
+	rook->player = true;
 	rook->designation = ROOK;
 
 	board[8] = rook;
@@ -102,7 +106,7 @@ Board::Board(){
 	rook->x = 0;
 	rook->y = 5;
 	rook->val = 500;
-	rook->player = true;
+	rook->player = false;
 	rook->designation = ROOK;
 
 	board[9] = rook;
@@ -112,7 +116,7 @@ Board::Board(){
 		pawn->x = i - 10;
 		pawn->y = 1;
 		pawn->val = 100;
-		pawn->player = false;
+		pawn->player = true;
 		pawn->designation = PAWN;
 		board[i] = pawn;
 		pawn = new piece;
@@ -122,7 +126,7 @@ Board::Board(){
 		pawn->x = i - 15;
 		pawn->y = 4;
 		pawn->val = 100;
-		pawn->player = true;
+		pawn->player = false;
 		pawn->designation = PAWN;
 		board[i] = pawn;
 		pawn = new piece;
@@ -133,10 +137,12 @@ Board::Board(){
 //constructor for setting up test boards
 
 Board::Board(int x, int y, int pieceType){
+	
 	piece *tempPiece = new piece;
 	pieceCount = 1;
-	root = new move(0,0,0,0,WHITE);
-	
+
+	Init();
+
 	switch(pieceType){
 		case KING:	
 			tempPiece->x = x;
@@ -198,6 +204,17 @@ Board::Board(int x, int y, int pieceType){
 			board[0] = tempPiece;
 			break;
 	}
+}
+
+void Board::Init(){
+
+	onMove = WHITE;
+	winner = false;
+	
+	root = new move(0,0,0,0,WHITE);
+	root->childrenSize = 0;
+
+	srand(time(NULL));
 }
 
 Board::~Board(){
@@ -301,10 +318,50 @@ void Board::displayBoard(){
 
 }
 
+int Board::getWinner(){
+	if(winner)
+		if(onMove == WHITE)
+			return 1;
+		else
+			return -1;
+	else
+		return 0;
+
+}
+
 move* Board::getMove(){
 	moveGen(root);
 	displayMoves();
 	return NULL;
+}
+
+move* Board::getRandomMove(){
+	int randNum = 0;
+	
+	moveGen(root);
+	
+	randNum = rand() % root->childrenSize;
+	
+	return root->children[randNum];
+}
+
+void Board::executeMove(move* exMove){
+	for(int i = 0; i < pieceCount; i++){
+		if(exMove->x2 == board[i]->x && exMove->y2 == board[i]->y){
+			if(board[i]->val == 10000)
+				winner = true;
+			board[i] = board[pieceCount - 1];
+			pieceCount--;
+		}
+	}
+
+	for(int i = 0; i < pieceCount; i++){
+		if(exMove->x1 == board[i]->x && exMove->y1 == board[i]->y){
+			board[i]->x = exMove->x2;
+			board[i]->y = exMove->y2;
+		}
+	}
+	onMove = !onMove;
 }
 
 void Board::moveGen(move *subRoot){
@@ -351,8 +408,18 @@ void Board::moveGen(move *subRoot){
 				break;	
 			case PAWN:
 				if(board[i]->player == WHITE){
-					
-
+					for(int j = 1; j < 4; j++){
+						scanMove(board[i]->x, board[i]->y,
+							j, false, PAWN, subRoot,
+							board[i]->player);
+					}
+				}
+				else{
+					for(int j = 5; j < 8; j++){
+						scanMove(board[i]->x, board[i]->y,
+							j, false, PAWN, subRoot,
+							board[i]->player);
+					}
 				}
 				break;
 		}
@@ -579,6 +646,60 @@ bool Board::rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer
 
 	return true;
 }
-bool Board::pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){return false;}
+bool Board::pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){
+	if(xdst < 0 || xdst > X_MAX)
+		return false;
+	if(ydst < 0 || ydst > Y_MAX)
+		return false;
+	//if dir is odd do a normal bishop move. In the directional
+	//constants, the diagonals are odd, and the laterals are even
+	//Bit wise and with one yield zero if the number is even,
+	//and it's a LOT faster than num%2
+
+	if(xsrc != xdst && ysrc != ydst){//check the diagonals 		
+		for(int i = 0; i < pieceCount; i++){
+			if(xsrc == board[i]->x && ysrc == board[i]->y)
+				continue;
+			else if(xdst == board[i]->x && ydst == board[i]->y)
+				if(srcPlayer != board[i]->player)
+					return true;
+		}
+		return false;
+		
+	}
+	else{//check the lateral directions
+		for(int i = 0; i < pieceCount; i++){
+			if(xsrc == board[i]->x && ysrc == board[i]->y)
+				continue;
+			//check if there is a piece in the dest square
+			else if(xdst == board[i]->x && ydst == board[i]->y)
+					return false;
+		}
+	}
+
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

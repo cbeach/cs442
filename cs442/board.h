@@ -15,11 +15,21 @@ class Board{
 
 		vector<piece>* getBoard();
 		move* getMove();
+		move* getRandomMove();
 		void updateBoard(char*);
 		int eval();
 		void displayBoard();
+		void displayMoves();
+		
+		void executeMove(move*);
+
+		void Init();
+
+		int getWinner();
 	protected:
 		int pieceCount;
+		bool winner;
+
 		string startingPosition;
 		
 		piece* board[20];	
@@ -28,12 +38,11 @@ class Board{
 		move * root;
 		
 		vector<move*>::iterator it;
-				
-		void displayMoves();
-			
-		void moveGen(move*);
 		
+		void undoMove();
 
+
+		void moveGen(move*);
 		bool scanMove(int x, int y, int dir, bool recure, int piece,
 		move *subRoot, bool srcPlayer);
 
@@ -44,6 +53,7 @@ class Board{
 		bool knightMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer, int dir);
 		bool rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
+		
 
 		
 };
