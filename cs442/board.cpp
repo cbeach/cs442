@@ -230,94 +230,6 @@ int Board::eval(){
 	return NULL;
 }
 
-//for displaying the moves on the test board
-void Board::displayMoves(){
-	
-	char * textBoard[5];
-
-	for(int i = 0; i < 5; i++){
-		textBoard[i] = new char[6];
-		for(int j = 0; j < 6; ++j){
-			textBoard[i][j] = '.';
-		}
-	}
-
-	for(int i = 0; i < pieceCount; i++){
-		switch(board[i]->val){
-			case 10000: textBoard[board[i]->x][board[i]->y] = 'k';
-				  break;
-				 
-			case 900: textBoard[board[i]->x][board[i]->y] = 'q';
-				  break;
-			case 301: textBoard[board[i]->x][board[i]->y] = 'b';
-				  break;
-			case 300: textBoard[board[i]->x][board[i]->y] = 'n';
-				  break;
-			case 500: textBoard[board[i]->x][board[i]->y] = 'r';
-				  break;
-			case 100: textBoard[board[i]->x][board[i]->y] = 'p';
-				  break;
-			default:  break;
-		}
-
-		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != '.')
-			textBoard[board[i]->x][board[i]->y] =
-			toupper(textBoard[board[i]->x][board[i]->y]);
-	}
-
-	move *tempMove = NULL;
-	
-	for(int i = 0; i < root->childrenSize; i++){
-		tempMove = root->children[i];
-		textBoard[tempMove->x2][tempMove->y2] = 'x';
-	}
-		
-	for(int i = 4; i >= 0; i--){
-		cout << textBoard[i] << endl;
-	}
-
-	
-}
-
-void Board::displayBoard(){
-	char * textBoard[5];
-
-	for(int i = 0; i < 5; i++){
-		textBoard[i] = new char[6];
-		for(int j = 0; j < 6; ++j){
-			textBoard[i][j] = '.';
-		}
-	}
-
-	for(int i = 0; i < pieceCount; i++){
-		switch(board[i]->val){
-			case 10000: textBoard[board[i]->x][board[i]->y] = 'k';
-				  break;
-				 
-			case 900: textBoard[board[i]->x][board[i]->y] = 'q';
-				  break;
-			case 301: textBoard[board[i]->x][board[i]->y] = 'b';
-				  break;
-			case 300: textBoard[board[i]->x][board[i]->y] = 'n';
-				  break;
-			case 500: textBoard[board[i]->x][board[i]->y] = 'r';
-				  break;
-			case 100: textBoard[board[i]->x][board[i]->y] = 'p';
-				  break;
-			default:  break;
-		}
-
-		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != 'x')
-			textBoard[board[i]->x][board[i]->y] =
-			toupper(textBoard[board[i]->x][board[i]->y]);
-	}
-	
-	for(int i = 4; i >= 0; i--){
-		cout << textBoard[i] << endl;
-	}
-
-}
-
 int Board::getWinner(){
 	if(winner)
 		if(onMove == WHITE)
@@ -331,27 +243,37 @@ int Board::getWinner(){
 
 move* Board::getMove(){
 	moveGen(root);
+	cout << "three" << endl;
 	displayMoves();
 	return NULL;
 }
 
 move* Board::getRandomMove(){
 	int randNum = 0;
-	
+	cout << "one" << endl;
 	moveGen(root);
 	
+	cout << "two" << endl;
 	randNum = rand() % root->childrenSize;
-	
+	cout << root->childrenSize << endl;
+
 	return root->children[randNum];
 }
 
 void Board::executeMove(move* exMove){
+	displayMove(exMove);
 	for(int i = 0; i < pieceCount; i++){
 		if(exMove->x2 == board[i]->x && exMove->y2 == board[i]->y){
+			
 			if(board[i]->val == 10000)
 				winner = true;
+			delete board[i];
 			board[i] = board[pieceCount - 1];
+			board[pieceCount] = NULL;
 			pieceCount--;
+			if(pieceCount == 0){
+				cout << "Error: Piece Count = zero" << endl;
+			}
 		}
 	}
 
@@ -681,7 +603,17 @@ bool Board::pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer
 	return true;
 }
 
-
+void Board::deallocRoot(move* subRoot){
+	if(subRoot->childrenSize != 0 && subRoot->children != NULL){
+		for(int i = 0; i < subRoot->childrenSize; i++){
+			if(subRoot->children[i] != NULL)
+				deallocRoot(subRoot->children[i]);
+			else
+				delete subRoot->children[i];
+		}
+		delete[] subRoot->children;
+	}
+}
 
 
 

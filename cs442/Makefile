@@ -1,10 +1,12 @@
 TARGET := ch
 
 OBJECTS :=\
+	testing.o\
 	driver.o\
 	board.o
 
 SOURCE :=\
+	testing.cpp\
 	driver.cpp\
 	board.cpp
 

@@ -20,7 +20,9 @@ class Board{
 		int eval();
 		void displayBoard();
 		void displayMoves();
-		
+		void displayPieces();
+		void displayMove(move*);
+
 		void executeMove(move*);
 
 		void Init();
@@ -29,7 +31,7 @@ class Board{
 	protected:
 		int pieceCount;
 		bool winner;
-
+		
 		string startingPosition;
 		
 		piece* board[20];	
@@ -54,6 +56,7 @@ class Board{
 		bool rookMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		bool pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		
+		void deallocRoot(move*);
 
 		
 };
