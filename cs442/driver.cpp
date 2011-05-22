@@ -1,11 +1,34 @@
-#include <iostream>
+#include <QtGui/QApplication>
+#include <QtGui/QPushButton>
+#include <QtGui/QGridLayout>
+#include <QtGui/QWidget>
+#include <QtGui/QGraphicsView>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsItem>
+#include <QtGui/QLabel>
+
+
 #include "board.h"
 #include "defs.h"
+#include "GuiBoard.h"
+
+#define GUI
 
 using namespace std;
+#ifdef GUI
+int main(int argc, char** argv)
+{
+		QApplication app(argc,argv);	
+		GuiBoard board;
+		board.show();
+		return app.exec();
+}
+#endif
+/*
+#ifndef GUI
 
 int main( int argc, char** argv){
-	Board b;
+	board b;
 	move* tempMove = 0;
 	cout << endl;
 
@@ -26,3 +49,6 @@ int main( int argc, char** argv){
 
 	return 0;
 }
+#endif
+*/
+

@@ -220,8 +220,40 @@ void Board::Init(){
 Board::~Board(){
 }
 
-vector<piece>* Board::getBoard(){
-	return NULL;
+char** Board::getBoard(){
+	char * textBoard[5];
+
+	for(int i = 0; i < 5; i++){
+		textBoard[i] = new char[6];
+		for(int j = 0; j < 6; ++j){
+			textBoard[i][j] = '.';
+		}
+	}
+
+	for(int i = 0; i < pieceCount; i++){
+		switch(board[i]->designation){
+			case KING: textBoard[board[i]->x][board[i]->y] = 'k';
+				  break;
+				 
+			case QUEEN: textBoard[board[i]->x][board[i]->y] = 'q';
+				  break;
+			case BISHOP: textBoard[board[i]->x][board[i]->y] = 'b';
+				  break;
+			case KNIGHT: textBoard[board[i]->x][board[i]->y] = 'n';
+				  break;
+			case ROOK: textBoard[board[i]->x][board[i]->y] = 'r';
+				  break;
+			case PAWN: textBoard[board[i]->x][board[i]->y] = 'p';
+				  break;
+			default:  break;
+		}
+
+		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != 'x')
+			textBoard[board[i]->x][board[i]->y] =
+			toupper(textBoard[board[i]->x][board[i]->y]);
+	}
+
+	return textBoard;
 }
 
 void Board::updateBoard(char* move){}
@@ -256,7 +288,7 @@ move* Board::getRandomMove(){
 	cout << "two" << endl;
 	randNum = rand() % root->childrenSize;
 	cout << root->childrenSize << endl;
-
+	
 	return root->children[randNum];
 }
 
@@ -284,6 +316,8 @@ void Board::executeMove(move* exMove){
 		}
 	}
 	onMove = !onMove;
+	deallocRoot(root);
+	root = reallocRoot();
 }
 
 void Board::moveGen(move *subRoot){
@@ -611,11 +645,21 @@ void Board::deallocRoot(move* subRoot){
 			else
 				delete subRoot->children[i];
 		}
-		delete[] subRoot->children;
 	}
 }
 
+move* Board::reallocRoot(){
+	move* tempRoot = new move(0,0,0,0, onMove);
+	tempRoot->childrenSize = 0;
+	tempRoot->parent = NULL;
+	
+	for(int i = 0; i < MAX_BRANCH_SIZE - 1; i++){
+		tempRoot->children[i] = NULL;
+	}
 
+	return tempRoot;
+
+}
 
 
 

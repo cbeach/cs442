@@ -27,4 +27,6 @@ const bool BLACK = false;
 const int X_MAX = 4;
 const int Y_MAX = 5;
 
+const int MAX_BRANCH_SIZE = 128;
+
 #endif

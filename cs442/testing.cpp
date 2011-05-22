@@ -74,19 +74,19 @@ void Board::displayBoard(){
 	}
 
 	for(int i = 0; i < pieceCount; i++){
-		switch(board[i]->val){
-			case 10000: textBoard[board[i]->x][board[i]->y] = 'k';
+		switch(board[i]->designation){
+			case KING: textBoard[board[i]->x][board[i]->y] = 'k';
 				  break;
 				 
-			case 900: textBoard[board[i]->x][board[i]->y] = 'q';
+			case QUEEN: textBoard[board[i]->x][board[i]->y] = 'q';
 				  break;
-			case 301: textBoard[board[i]->x][board[i]->y] = 'b';
+			case BISHOP: textBoard[board[i]->x][board[i]->y] = 'b';
 				  break;
-			case 300: textBoard[board[i]->x][board[i]->y] = 'n';
+			case KNIGHT: textBoard[board[i]->x][board[i]->y] = 'n';
 				  break;
-			case 500: textBoard[board[i]->x][board[i]->y] = 'r';
+			case ROOK: textBoard[board[i]->x][board[i]->y] = 'r';
 				  break;
-			case 100: textBoard[board[i]->x][board[i]->y] = 'p';
+			case PAWN: textBoard[board[i]->x][board[i]->y] = 'p';
 				  break;
 			default:  break;
 		}

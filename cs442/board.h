@@ -13,7 +13,7 @@ class Board{
 		Board(int x, int y, int pieceType);
 		~Board();
 
-		vector<piece>* getBoard();
+		char ** getBoard();
 		move* getMove();
 		move* getRandomMove();
 		void updateBoard(char*);
@@ -57,6 +57,7 @@ class Board{
 		bool pawnMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer);
 		
 		void deallocRoot(move*);
+		move* reallocRoot();
 
 		
 };

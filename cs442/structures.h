@@ -2,7 +2,7 @@
 #define _STRUCTURE_H
 
 #include <vector>
-
+#include "defs.h"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ struct move{
 	bool player; 	//true = white
 	int childrenSize;
 	move *parent;
-	move *children[128];
+	move *children[MAX_BRANCH_SIZE];
 	piece* movedPiece;
 	
 		
