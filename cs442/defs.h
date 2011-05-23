@@ -29,4 +29,6 @@ const int Y_MAX = 5;
 
 const int MAX_BRANCH_SIZE = 128;
 
+const char FILL_CHAR = '.';
+
 #endif

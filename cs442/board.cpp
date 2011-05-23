@@ -81,7 +81,8 @@ Board::Board(){
 	knight->y = 0;
 	knight->val = 300;
 	knight->player = true;
-	bishop->designation = KNIGHT;
+	knight->designation = KNIGHT;
+	cout << KNIGHT << endl;
 	
 	board[6] = knight;
 	knight = new piece;
@@ -131,7 +132,6 @@ Board::Board(){
 		board[i] = pawn;
 		pawn = new piece;
 	}
-
 }
 
 //constructor for setting up test boards
@@ -221,30 +221,38 @@ Board::~Board(){
 }
 
 char** Board::getBoard(){
-	char * textBoard[5];
+	char ** textBoard = new char*[5];
+	
+//	displayBoard();
 
 	for(int i = 0; i < 5; i++){
 		textBoard[i] = new char[6];
 		for(int j = 0; j < 6; ++j){
-			textBoard[i][j] = '.';
+			textBoard[i][j] = FILL_CHAR;
 		}
 	}
 
 	for(int i = 0; i < pieceCount; i++){
 		switch(board[i]->designation){
-			case KING: textBoard[board[i]->x][board[i]->y] = 'k';
-				  break;
+			case KING: 
+				textBoard[board[i]->x][board[i]->y] = 'k';
+				break;
 				 
-			case QUEEN: textBoard[board[i]->x][board[i]->y] = 'q';
-				  break;
-			case BISHOP: textBoard[board[i]->x][board[i]->y] = 'b';
-				  break;
-			case KNIGHT: textBoard[board[i]->x][board[i]->y] = 'n';
-				  break;
-			case ROOK: textBoard[board[i]->x][board[i]->y] = 'r';
-				  break;
-			case PAWN: textBoard[board[i]->x][board[i]->y] = 'p';
-				  break;
+			case QUEEN: 
+				textBoard[board[i]->x][board[i]->y] = 'q';
+				break;
+			case BISHOP: 
+				textBoard[board[i]->x][board[i]->y] = 'b';
+				break;
+			case KNIGHT: 
+				textBoard[board[i]->x][board[i]->y] = 'n';
+				break;
+			case ROOK:
+				textBoard[board[i]->x][board[i]->y] = 'r';
+				break;
+			case PAWN: 
+				textBoard[board[i]->x][board[i]->y] = 'p';
+				break;
 			default:  break;
 		}
 
@@ -275,20 +283,28 @@ int Board::getWinner(){
 
 move* Board::getMove(){
 	moveGen(root);
-	cout << "three" << endl;
-	displayMoves();
+//	displayMoves();
 	return NULL;
 }
 
 move* Board::getRandomMove(){
 	int randNum = 0;
-	cout << "one" << endl;
 	moveGen(root);
+
 	
-	cout << "two" << endl;
 	randNum = rand() % root->childrenSize;
-	cout << root->childrenSize << endl;
-	
+	for(int i = 0; i < pieceCount; i++){
+		if(root->children[randNum]->x1 == board[i]->x &&
+			root->children[randNum]->y1 == board[i]->y){
+			
+			cout << "x: " << board[i]->x << endl;
+			cout << "y: " << board[i]->y << endl;
+
+			cout << "des: " << board[i]->designation << endl;
+		}
+		
+	} 
+		
 	return root->children[randNum];
 }
 
@@ -315,6 +331,9 @@ void Board::executeMove(move* exMove){
 			board[i]->y = exMove->y2;
 		}
 	}
+
+	displayPieces();
+
 	onMove = !onMove;
 	deallocRoot(root);
 	root = reallocRoot();
@@ -323,61 +342,63 @@ void Board::executeMove(move* exMove){
 void Board::moveGen(move *subRoot){
 
 	for(int i = 0; i < pieceCount; i++){
-		switch(board[i]->designation){
-			case KING:
-				for(int j = 1; j < 9; j++)
-					scanMove(board[i]->x, board[i]->y,
-						j, false, KING, subRoot, 
-						board[i]->player);
-				break;
-				
-			case QUEEN:
-				for(int j = 1; j < 9; j++)
-					scanMove(board[i]->x, board[i]->y,
-						j, true, QUEEN, subRoot, 
-						board[i]->player);
-				break;
-			case BISHOP:
-				for(int j = 1; j < 9; j++)
-					if(j & 1) 
+		if(board[i]->player == onMove){
+			switch(board[i]->designation){
+				case KING:
+					for(int j = 1; j < 9; j++)
 						scanMove(board[i]->x, board[i]->y,
-							j, true, BISHOP, subRoot, 
+							j, false, KING, subRoot, 
 							board[i]->player);
-					else
+					break;
+					
+				case QUEEN:
+					for(int j = 1; j < 9; j++)
 						scanMove(board[i]->x, board[i]->y,
-							j, false, BISHOP, subRoot, 
+							j, true, QUEEN, subRoot, 
 							board[i]->player);
-				break;
-			case KNIGHT:
-				for(int j = 1; j < 9; j++)
-					scanMove(board[i]->x, board[i]->y,
-						j, false, KNIGHT, subRoot, 
-						board[i]->player);
-				
-				break;
-			case ROOK:
-				for(int j = 1; j < 9; j++)
-					scanMove(board[i]->x, board[i]->y,
-						j, true, ROOK, subRoot, 
-						board[i]->player);
-				
-				break;	
-			case PAWN:
-				if(board[i]->player == WHITE){
-					for(int j = 1; j < 4; j++){
+					break;
+				case BISHOP:
+					for(int j = 1; j < 9; j++)
+						if(j & 1) 
+							scanMove(board[i]->x, board[i]->y,
+								j, true, BISHOP, subRoot, 
+								board[i]->player);
+						else
+							scanMove(board[i]->x, board[i]->y,
+								j, false, BISHOP, subRoot, 
+								board[i]->player);
+					break;
+				case KNIGHT:
+					for(int j = 1; j < 9; j++)
 						scanMove(board[i]->x, board[i]->y,
-							j, false, PAWN, subRoot,
+							j, false, KNIGHT, subRoot, 
 							board[i]->player);
+					
+					break;
+				case ROOK:
+					for(int j = 1; j < 9; j++)
+						scanMove(board[i]->x, board[i]->y,
+							j, true, ROOK, subRoot, 
+							board[i]->player);
+					
+					break;	
+				case PAWN:
+					if(board[i]->player == WHITE){
+						for(int j = 1; j < 4; j++){
+							scanMove(board[i]->x, board[i]->y,
+								j, false, PAWN, subRoot,
+								board[i]->player);
+						}
 					}
-				}
-				else{
-					for(int j = 5; j < 8; j++){
-						scanMove(board[i]->x, board[i]->y,
-							j, false, PAWN, subRoot,
-							board[i]->player);
+					else{
+						for(int j = 5; j < 8; j++){
+							scanMove(board[i]->x, board[i]->y,
+								j, false, PAWN, subRoot,
+								board[i]->player);
+						}
 					}
-				}
-				break;
+					break;
+			}
 		}
 	}
 }
@@ -459,7 +480,7 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece,
 		scanMove(x2, y2, dir, recure, piece, subRoot, srcPlayer);
 	else return true;
 	
-	return true;
+	return false;
 }
 
 bool Board::kqMoveCheck(int xsrc, int ysrc, int xdst, int ydst, bool srcPlayer){

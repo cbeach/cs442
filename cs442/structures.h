@@ -25,6 +25,7 @@ struct move{
 	move *children[MAX_BRANCH_SIZE];
 	piece* movedPiece;
 	
+	
 		
 	move(int inX1, int inY1, int inX2, int inY2, bool inPlayer){
 		x1 = inX1;

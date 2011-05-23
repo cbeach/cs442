@@ -90,6 +90,8 @@ GuiBoard::init()
 	BlackPieces[3] = new QPixmap(".qrc/n.png");
 	BlackPieces[4] = new QPixmap(".qrc/r.png");
 	BlackPieces[5] = new QPixmap(".qrc/p.png");
+	
+	nullPixmap = new QPixmap("");
 
 	QGridLayout *grid = new QGridLayout;
 	
@@ -124,7 +126,8 @@ GuiBoard::init()
 				LabelBoard[i][j]->setPalette(*pal);
 			}
 			blackSquare = !blackSquare;
-			grid->addWidget(LabelBoard[i][j],i,j);			
+			grid->addWidget(LabelBoard[i][j],i,j);	
+					
 		}
 	}
 	for(int i = 0; i < 5; i++){
@@ -144,21 +147,69 @@ GuiBoard::init()
 }
 
 //this slot gets called everytime a player pushes a button
-void GuiBoard::nextTurn(){
-	
-	move* randomMove = NULL;
-	randomMove = chessBoard->getRandomMove();
-	chessBoard->executeMove(randomMove);
+
+void GuiBoard::nextTurn() {
+	chessBoard->executeMove(chessBoard->getRandomMove());
+
+	char** temp = chessBoard->getBoard();
+	displayBoard(temp);
 
 }
 
-void GuiBoard::setPieces(){
+void GuiBoard::displayBoard(char** textBoard){
 	
+	
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 6; j++){
+			LabelBoard[j][i]->setPixmap(NULL);		
+			switch(textBoard[i][j]){
+				case 'K':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[0]);
+					break;
+				case 'Q':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[1]);
+					break;
+				case 'B':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[2]);
+					break;
+				case 'N':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[3]);
+					break;
+				case 'R':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[4]);
+					break;
+				case 'P':
+					LabelBoard[j][i]->setPixmap(*WhitePieces[5]);
+					break;
+				case 'k':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[0]);
+					break;
+				case 'q':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[1]);
+					break;
+				case 'b':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[2]);
+					break;
+				case 'n':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[3]);
+					break;
+				case 'r':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[4]);
+					break;
+				case 'p':
+					LabelBoard[j][i]->setPixmap(*BlackPieces[5]);
+					break;
+
+
+
+
+
+			}
+		}
+	}
 
 
 }
-
-
 
 
 

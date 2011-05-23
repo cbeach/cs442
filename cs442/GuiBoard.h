@@ -59,7 +59,7 @@ class GuiBoard: public QWidget
 		QLabel ***LabelBoard;	
 		QPixmap **WhitePieces;
 		QPixmap **BlackPieces;
-
+		QPixmap *nullPixmap;
 		//status symbols that tell the player who's turn it is
 
 		QLabel *TurnLabel;
@@ -76,8 +76,7 @@ class GuiBoard: public QWidget
 		//complex initialization taskes that I didn't want to
 		//handle in the constructor
 		void init();
-		void setPieces();
-		//erase everything and start over
+		void displayBoard(char**);
 
 };
 

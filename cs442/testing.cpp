@@ -44,7 +44,7 @@ void Board::displayMoves(){
 			default:  break;
 		}
 
-		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != '.')
+		if(board[i]->player && textBoard[board[i]->x][board[i]->y] != FILL_CHAR)
 			textBoard[board[i]->x][board[i]->y] =
 			toupper(textBoard[board[i]->x][board[i]->y]);
 	}
@@ -105,11 +105,7 @@ void Board::displayBoard(){
 void Board::displayPieces(){
 	for(int i = 0; i < pieceCount; i++){	
 		cout << "x: " << board[i]-> x << '\t';
-	}
-	for(int i = 0; i < pieceCount; i++){
 		cout << "y: " << board[i]-> y << '\t';
-	}
-	for(int i = 0; i < pieceCount; i++){
 		switch(board[i]->designation){
 			case KING:
 				cout << "King" << '\t';
@@ -130,31 +126,37 @@ void Board::displayPieces(){
 				cout << "Pawn" << '\t';
 				break;
 		}
+		cout << endl;
 	}
-	for(int i = 0; i < 15; i++){	
-		cout << "x: " << board[i]-> x << endl;
-		cout << "y: " << board[i]-> y << endl;
+
+	cout << "full array dump:--------------" << endl;
+
+	for(int i = 0; i < 20; i++){	
+		cout << "x: " << board[i]-> x << '\t';
+		cout << "y: " << board[i]-> y << '\t';
 		switch(board[i]->designation){
 			case KING:
-				cout << "King" << endl;
+				cout << "King" << '\t';
 				break;
 			case QUEEN:
-				cout << "Queen" << endl;
+				cout << "Queen" << '\t';
 				break;
 			case BISHOP:
-				cout << "Bishop" << endl;
+				cout << "Bishop" << '\t';
 				break;
 			case KNIGHT:
-				cout << "Knight" << endl;
+				cout << "Knight" << '\t';
 				break;
 			case ROOK:
-				cout << "Rook" << endl;
+				cout << "Rook" << '\t';
 				break;
 			case PAWN:
-				cout << "Pawn" << endl;
+				cout << "Pawn" << '\t';
 				break;
 		}
+		cout << endl;
 	}
+	cout << endl << endl << endl;
 }
 
 void Board::displayMove(move* mv){
