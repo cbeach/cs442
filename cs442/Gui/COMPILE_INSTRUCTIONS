@@ -1,0 +1,23 @@
+Dependencies
+	Qt4
+	qmake
+
+To make in Ubuntu.
+	run the following commands 
+		qmake-qt4 -project
+		qmake-qt4 -makefile
+		make
+	If you are running this in the linux lab on campus there is an added step
+	open ~/.bashrc and add the following
+	
+		export QTDIR='/usr/lib/qt4'
+		alias assistant='/usr/bin/assistant-qt4'
+		alias qmake='/usr/bin/qmake-qt4'
+		alias designer='/usr/bin/designer-qt4'
+		alias linguist='/usr/bin/linguist-qt4'
+		alias lrelease='/usr/bin/lrelease-qt4'
+		alias lupdate='/usr/bin/lupdate-qt4'
+		alias moc='/usr/bin/moc-qt4'
+		alias qtconfig='/usr/bin/qtconfig-qt4'
+		alias uic='/usr/bin/uic-qt4'
+
