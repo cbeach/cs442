@@ -408,7 +408,7 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece,
 			move *subRoot, bool srcPlayer){
 	int x2 = 0;
 	int y2 = 0;
-	bool goodMove;
+	bool goodMove = false;
 	
 	move* tempMove;
 
@@ -461,7 +461,40 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece,
 			goodMove = bishopMoveCheck(x, y, x2, y2, srcPlayer, dir);		
 			break;
 		case KNIGHT: 
-			knightOffset(x, y, &x2, &y2, dir);			
+			switch(dir){
+				case NW:
+					x2 += 0;
+					y2 += 1;
+					break;
+				case N:
+					x2 += 1;
+					y2 += 1;
+					break;
+				case NE:
+					x2 += 1;
+					y2 += 0;
+					break;
+				case E:
+					x2 += 1;
+					y2 += -1;
+					break;
+				case SE:
+					x2 += 0;
+					y2 += -1;
+					break;
+				case S: 
+					x2 += -1;
+					y2 += -1;
+					break;
+				case SW:
+					x2 += -1;
+					y2 += 0;
+					break;
+				case W:
+					x2 += -1;
+					y2 += 1;
+					break;
+			}
 			goodMove = knightMoveCheck(x, y, x2, y2, srcPlayer, dir);		
 		        break;
 		case ROOK: 
@@ -476,10 +509,24 @@ bool Board::scanMove(int x, int y, int dir, bool recure, int piece,
 		subRoot->children[subRoot->childrenSize] = tempMove;
 		subRoot->childrenSize++;
 	}
+	
+	#ifdef careful
+	for(int i = 0; i < pieceCount; i++){
+		if(x == board[i]->x && y == board[i]->y){
+			cout << "Piece Exists" << endl;
+		}
+		else
+			cout << "ahhh " << piece << endl;
+	}
+
+	#endif
+	
+	
+	
 	if(goodMove && recure)
 		scanMove(x2, y2, dir, recure, piece, subRoot, srcPlayer);
 	else return true;
-	
+
 	return false;
 }
 

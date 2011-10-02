@@ -104,8 +104,10 @@ void Board::displayBoard(){
 
 void Board::displayPieces(){
 	for(int i = 0; i < pieceCount; i++){	
+		cout << "i: " << i << '\t';
 		cout << "x: " << board[i]-> x << '\t';
 		cout << "y: " << board[i]-> y << '\t';
+		cout << "des: " << board[i]->designation << '\t';
 		switch(board[i]->designation){
 			case KING:
 				cout << "King" << '\t';
@@ -132,29 +134,34 @@ void Board::displayPieces(){
 	cout << "full array dump:--------------" << endl;
 
 	for(int i = 0; i < 20; i++){	
-		cout << "x: " << board[i]-> x << '\t';
-		cout << "y: " << board[i]-> y << '\t';
-		switch(board[i]->designation){
-			case KING:
-				cout << "King" << '\t';
-				break;
-			case QUEEN:
-				cout << "Queen" << '\t';
-				break;
-			case BISHOP:
-				cout << "Bishop" << '\t';
-				break;
-			case KNIGHT:
-				cout << "Knight" << '\t';
-				break;
-			case ROOK:
-				cout << "Rook" << '\t';
-				break;
-			case PAWN:
-				cout << "Pawn" << '\t';
-				break;
+		if(board[i] != NULL){
+			cout << "i: " << i << '\t';
+			cout << "x: " << board[i]-> x << '\t';
+			cout << "y: " << board[i]-> y << '\t';
+			cout << "des: " << board[i]->designation << '\t';
+			switch(board[i]->designation){
+				case KING:
+					cout << "King" << '\t';
+					break;
+				case QUEEN:
+					cout << "Queen" << '\t';
+					break;
+				case BISHOP:
+					cout << "Bishop" << '\t';
+					break;
+				case KNIGHT:
+					cout << "Knight" << '\t';
+					break;
+				case ROOK:
+					cout << "Rook" << '\t';
+					break;
+				case PAWN:
+					cout << "Pawn" << '\t';
+					break;
+			}
+			cout << endl;
 		}
-		cout << endl;
+		else cout << "NULL" << endl;
 	}
 	cout << endl << endl << endl;
 }
